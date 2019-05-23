@@ -4,6 +4,13 @@ import scala.annotation.tailrec
 
 
 sealed trait LinkedList[+A]{
+
+  def map[B](f:A=>B):LinkedList[B] = this match {
+    case End => End
+    case Pair(head, tail) => Pair(f(head), tail.map(f))
+  }
+
+
   def length:Int = {
     @tailrec def go(list:LinkedList[A] ,result:Int):Int = list match {
       case End => result
@@ -43,7 +50,7 @@ case object End extends LinkedList[Nothing]
 
 object LinkedList{
   def apply[A](as:Seq[A]):LinkedList[A]= {
-    def go (result:LinkedList[A], as:Seq[A]):LinkedList[A] = as.headOption match {
+    @tailrec def go (result:LinkedList[A], as:Seq[A]):LinkedList[A] = as.headOption match {
       case None => result
       case Some(a) => go(Pair(a,result), as.tail)
     }
